@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etch-a-Sketch</title>
+</head>
+<body>
+    <h1>ETCH-A-SKETCH</h1>
+    <div class="container" id="container">
+
+    </div>
+    <div class="buttoncontainer">
+    <button id="gridbutton">Change Grid</button>
+    <button id="clearbutton" onclick="clearBoxes()">Clear Boxes</button>
+    <!-- <button id="savebutton" onclick="saveImage()">Save Image</button> -->
+    </div>
+<style>
+    body{
+      background-color: cornflowerblue;
+    }
+    h1{
+        text-align: center;
+        font-family: fantasy;
+        font-style: italic;
+        font-weight: lighter;
+    }
+    .container{
+        display: grid;
+        gap:0.1em;
+        padding:5px;
+        border-radius: 5px;
+        background:linear-gradient(45deg,lightblue,cadetblue);
+    }
+    .box{
+        background-color: white;
+        border:transparent;
+        padding-bottom: calc(100% - 2px);
+        
+    }
+    .box:hover{
+        background-color:rgba(189,195,199,80%);
+    }
+    button{
+        height:10vh;
+        aspect-ratio: 1 ;
+        width:auto;
+        border-radius:10%;
+        margin:20px 10px 0px 0px;
+        background-color: lime;
+        color:white;
+        font-size:70%;
+        text-align: center;
+        font-weight: bold;
+        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        border:4px solid white;
+    }
+    button:hover{
+        background-color:whitesmoke;
+        color:limegreen;
+        border-color: lime;
+        transform: scale(1.1);
+        transition: ease-in-out 60ms;
+    }
+    
+
+</style>
+<script>
+    const container = document.getElementById('container');
+let gridSize = 10;
+const colors = ["white","black", "red", "yellow", "blue", "green"];
+
+function createGrid(size) {
+  container.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+  container.innerHTML = '';
+  for (let i = 1; i <= size ** 2; i++) {
+    const box = document.createElement('div');
+    box.classList.add('box');
+    box.setAttribute('data-color-index', 0); // Assign initial color index of 0 to each box
+    container.appendChild(box);
+
+    box.addEventListener("click", function() {
+      const colorIndex = parseInt(box.getAttribute('data-color-index'));
+      const nextColorIndex = (colorIndex + 1) % colors.length;
+      box.style.backgroundColor = colors[nextColorIndex];
+      box.setAttribute('data-color-index', nextColorIndex); // Update the color index for the next box
+    });
+  }
+}
+
+createGrid(gridSize);
+
+const gridButton = document.getElementById("gridbutton");
+gridButton.addEventListener("click", function() {
+  const newSize = parseInt(prompt("Enter New Grid Size"));
+  if (newSize > 0 && newSize <= 100) {
+    gridSize = newSize;
+    createGrid(gridSize);
+  } else {
+    alert("Please enter a number between 1 and 100");
+  }
+});
+container.addEventListener("contextmenu", function(event) {
+  event.preventDefault(); // Prevent the default context menu from appearing
+  const clickedBox = event.target;
+  if (clickedBox.classList.contains("box")) {
+    clickedBox.style.backgroundColor = colors[0]; // Change the box's background color to white
+    clickedBox.setAttribute('data-color-index', 0); // Update the color index for the box to 0
+  }
+});
+
+function clearBoxes() {
+  const boxes = document.querySelectorAll('.box');
+  boxes.forEach(box => {
+    box.style.backgroundColor = 'white';
+    box.setAttribute('data-color-index', 0); // Reset the color index to 0 for each box
+  });
+}
+
+// function saveImage() {
+//   const boxes = document.querySelectorAll('.box');
+//   const canvas = document.createElement('canvas');
+//   const context = canvas.getContext('2d');
+
+//   // Calculate the canvas size based on the box dimensions
+//   const boxSize = boxes[0].offsetWidth;
+//   const gridSize = Math.sqrt(boxes.length);
+//   const canvasWidth = boxSize * gridSize;
+//   const canvasHeight = boxSize * gridSize;
+
+//   canvas.width = canvasWidth;
+//   canvas.height = canvasHeight;
+
+//   boxes.forEach((box, index) => {
+//     const row = Math.floor(index / gridSize);
+//     const col = index % gridSize;
+//     const color = box.style.backgroundColor;
+
+//     context.fillStyle = color;
+//     context.fillRect(col * boxSize, row * boxSize, boxSize, boxSize);
+//   });
+
+//   // Save the screenshot as an image file
+//   const link = document.createElement('a');
+//   link.href = canvas.toDataURL();
+//   link.download = 'etch-a-sketch.jpg';
+//   link.click();
+// }
+
+</script>
+</body>
+</html>
